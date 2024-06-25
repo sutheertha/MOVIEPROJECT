@@ -1,0 +1,47 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Movies</h1>
+
+
+<form method="GET" action="{% url 'home' %}">
+    <input type="text" name="q" placeholder="Search by title or genre">
+    <button type="submit">Search</button>
+</form>
+
+
+<div class="movie-list">
+    {% if page_obj %}
+        {% for movie in page_obj %}
+            <div class="movie-card">
+                <h2><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a></h2>
+                {% if movie.poster_image %}
+                    <img src="{{ movie.poster_image.url }}" alt="{{ movie.title }}" width="150">
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No movies found.</p>
+    {% endif %}
+</div>
+
+
+<div class="step-links">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">previous</a>
+    {% endif %}
+
+    <span class="current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">last &raquo;</a>
+    {% endif %}
+</div>
+{% endblock %}
